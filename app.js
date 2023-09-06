@@ -16,6 +16,9 @@ const jwt = require('jsonwebtoken');
 // User schmea to store data
 const User = require('./models/User');
 
+// auth middleware
+const auth = require('./middleware/auth');
+
 // app
 const app = express();
 // for parsing json data
@@ -118,18 +121,24 @@ app.post('/login', async (req,res) => {
                 user.password = undefined;
                     
                 // return the user's data
-                res.status(200).json(user);
+                return res.status(200).json(user);
             }
         }
 
 
         // in case user not found or the password doesn't matches
-        res.status(400).send('wrong email / password');
+        return res.status(400).send('wrong email / password');
 
     } catch (error) {
         console.log('error',error);
     }
 })
 
+
+// dashboard 
+// only user with token can access it
+app.get('/dashboard',auth,(req,res) => {
+    res.send("this is the dashboard");
+})
 
 module.exports = app;
