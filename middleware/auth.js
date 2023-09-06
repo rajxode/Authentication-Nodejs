@@ -7,9 +7,13 @@ const auth = (req,res,next) => {
 
     // getting token form header / body / cookies
     // header contains "Bearer", so removing it from token string
-    const token = req.cookies.token ||
-                req.body.token ||
-                req.header("Authorization").replace("Bearer ","");
+    let token = req.cookies.token ||
+                req.body.token; 
+    
+    let header = req.header("Authorization");
+    if(header){
+        token = header.replace("Bearer ","");
+    }
     
     // if token doesn't exist 
     if(!token){

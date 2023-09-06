@@ -98,6 +98,7 @@ app.post('/create', async (req,res) => {
 // for login user 
 app.post('/login', async (req,res) => {
     try {
+
         // get email and password entered by user
         const { email, password} = req.body;
 
@@ -165,6 +166,30 @@ app.post('/login', async (req,res) => {
 // only user with token can access it
 app.get('/dashboard',auth,(req,res) => {
     res.send("this is the dashboard");
+});
+
+
+// for removing the token from cookie
+app.get('/logout',auth,(req,res) => {
+    
+    // getting token from cookie / body
+    const token = req.cookies.token ||
+        req.body.token; 
+
+    // checking if token is stored inside header
+    let header = req.header("Authorization");
+    if(header){
+        req.user = null;
+        // delete token from header
+        delete req.header["Authorization"];
+        return res.status(200).send("header cleared");
+    }
+
+    // if token found
+    if(token){
+        req.user = null;
+        return res.status(200).clearCookie("token").send("cookie cleared");
+    }
 })
 
 module.exports = app;
