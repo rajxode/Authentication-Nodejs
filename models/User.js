@@ -1,7 +1,10 @@
 
+// import mongoose
 const mongoose = require('mongoose');
 
+// creating schema for storing user's data
 const userSchema = new mongoose.Schema({
+    // name of user
     firstName:{
         type: String,
         default: null,
@@ -10,6 +13,7 @@ const userSchema = new mongoose.Schema({
         type: String,
         default: null,
     },
+    // email address
     email:{
         type: String,
         unique:true,
@@ -22,4 +26,6 @@ const userSchema = new mongoose.Schema({
     },
 });
 
+
+// exporting the model made from schema for storing and reading data
 module.exports = mongoose.model('User',userSchema);

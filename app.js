@@ -72,7 +72,9 @@ app.post('/create', async (req,res) => {
 
         // generating a new token for the user
         const token = jwt.sign(
+            // header
             {user_id: user._id, email},
+            // secret key
             process.env.SECRET_KEY,
             {
                 expiresIn: "2h"
@@ -176,6 +178,13 @@ app.get('/logout',auth,(req,res) => {
     const token = req.cookies.token ||
         req.body.token; 
 
+    // if token found
+    if(token){
+        // remove user's data
+        req.user = null;
+        return res.status(200).clearCookie("token").send("cookie cleared");
+    }
+
     // checking if token is stored inside header
     let header = req.header("Authorization");
     if(header){
@@ -185,11 +194,6 @@ app.get('/logout',auth,(req,res) => {
         return res.status(200).send("header cleared");
     }
 
-    // if token found
-    if(token){
-        req.user = null;
-        return res.status(200).clearCookie("token").send("cookie cleared");
-    }
 })
 
 module.exports = app;
