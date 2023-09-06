@@ -13,6 +13,9 @@ const bcrypt = require('bcryptjs');
 // creating jwt token
 const jwt = require('jsonwebtoken');
 
+// for parsing the data send inside the cookies
+var cookieParser = require('cookie-parser')
+
 // User schmea to store data
 const User = require('./models/User');
 
@@ -24,6 +27,8 @@ const app = express();
 // for parsing json data
 app.use(express.json());
 
+// middleware for parsing the cookies
+app.use(cookieParser());
 
 // home route
 app.get('/',(req,res) => {
@@ -119,7 +124,28 @@ app.post('/login', async (req,res) => {
                 user.token = token;
                 // hide the password
                 user.password = undefined;
-                    
+                
+                // store the token inside the cookies
+                // options for cookies
+                const options = {
+                    // time in which the cookie will expire
+                    expires: new Date(
+                        // current day + 3 days ( 3 * 24 hour * 60 min * 60 second * 1000 )
+                        Date.now() + 3 * 24 * 60 * 60 * 1000
+                    ),
+                    // for backend only
+                    httpOnly: true,
+                };
+
+                // store inside the cookie
+                // return json value { cookie, token , user data}
+                res.status(200).cookie("token", token, options).json({
+                    success: true,
+                    token,
+                    user,
+                });
+
+
                 // return the user's data
                 return res.status(200).json(user);
             }
